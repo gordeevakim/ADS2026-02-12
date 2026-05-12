@@ -16,22 +16,26 @@ public class A_QSort {
         }
     }
 
+    // Основной метод: для каждой точки считает, скольким отрезкам она принадлежит
     int[] getAccessory(InputStream stream) throws FileNotFoundException {
         Scanner scanner = new Scanner(stream);
 
-        int n = scanner.nextInt();
+        int n = scanner.nextInt();          // количество отрезков
         Segment[] segments = new Segment[n];
-        int m = scanner.nextInt();
+        int m = scanner.nextInt();          // количество точек
         int[] points = new int[m];
         int[] result = new int[m];
 
+        // Читаем отрезки
         for (int i = 0; i < n; i++) {
             segments[i] = new Segment(scanner.nextInt(), scanner.nextInt());
         }
+        // Читаем точки
         for (int i = 0; i < m; i++) {
             points[i] = scanner.nextInt();
         }
 
+        // Вытаскиваем все начала и все концы в отдельные массивы
         int[] starts = new int[n];
         int[] ends = new int[n];
         for (int i = 0; i < n; i++) {
@@ -39,19 +43,22 @@ public class A_QSort {
             ends[i] = segments[i].stop;
         }
 
+        // Сортируем для бинарного поиска
         Arrays.sort(starts);
         Arrays.sort(ends);
 
+        // Для каждой точки: сколько отрезков началось до/в ней минус сколько закончилось до неё
         for (int i = 0; i < m; i++) {
             int p = points[i];
-            int countStart = upperBound(starts, p);
-            int countEnd = lowerBound(ends, p);
+            int countStart = upperBound(starts, p);   // кол-во start <= p
+            int countEnd = lowerBound(ends, p);       // кол-во end < p
             result[i] = countStart - countEnd;
         }
 
         return result;
     }
 
+    // Бинарный поиск: возвращает кол-во элементов <= key (первый индекс, где arr[index] > key)
     private int upperBound(int[] arr, int key) {
         int left = 0, right = arr.length;
         while (left < right) {
@@ -65,6 +72,7 @@ public class A_QSort {
         return left;
     }
 
+    // Бинарный поиск: возвращает кол-во элементов < key (первый индекс, где arr[index] >= key)
     private int lowerBound(int[] arr, int key) {
         int left = 0, right = arr.length;
         while (left < right) {
@@ -78,6 +86,7 @@ public class A_QSort {
         return left;
     }
 
+    // Класс-отрезок: start - начало, stop - конец (start <= stop)
     private class Segment {
         int start;
         int stop;
